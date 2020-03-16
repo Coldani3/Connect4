@@ -17,19 +17,29 @@ namespace Connect4
         {
             Task rendererThread = new Task(() => BeginRendering());
             Task logicThread = new Task(() => BeginLogic());
+            Task inputThread = new Task(() => InputThread());
 
             rendererThread.Start();
             logicThread.Start();
+            inputThread.Start();
 
 
         }
 
+        /// <summary>
+        /// Main rendering thread.
+        /// </summary>
         public static void BeginRendering()
         {
 
         }
 
         public static void BeginLogic()
+        {
+
+        }
+
+        public static void InputThread()
         {
 
         }
