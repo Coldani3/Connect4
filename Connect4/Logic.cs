@@ -20,6 +20,27 @@ namespace Connect4
 
         }
 
+        public void HandleInput(ConsoleKeyInfo info)
+        {
+            if (Char.IsNumber(info.KeyChar))
+            {
+                int key = Convert.ToInt32(info.KeyChar);
+
+                if (key >= 1 && key <= 7)
+                {
+                    DropDot(key);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="index">1-7, the horizontal left to right coordinate of the hole to "drop" it into.</param>
+        public void DropDot(int index)
+        {
+
+        }
 
         public class Connect4Colour
         {
