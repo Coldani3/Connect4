@@ -8,8 +8,18 @@ namespace Connect4
 {
     public class Logic
     {
+        public Connect4Colour[,] ConnectFourGrid = new Connect4Colour[7,6];
 
-        public int[,] ConnectFourGrid = new int[7,6];
+        public Logic()
+        {
+
+        }
+
+        public void Tick()
+        {
+
+        }
+
 
         public class Connect4Colour
         {

@@ -8,10 +8,29 @@ namespace Connect4
 {
     class Program
     {
+        /// <summary>
+        /// Ticks per second
+        /// </summary>
+        public static int TickRate = 20;
+
         static void Main(string[] args)
         {
-            Task rendererThread;
-            Task logicThread;
+            Task rendererThread = new Task(() => BeginRendering());
+            Task logicThread = new Task(() => BeginLogic());
+
+            rendererThread.Start();
+            logicThread.Start();
+
+
+        }
+
+        public static void BeginRendering()
+        {
+
+        }
+
+        public static void BeginLogic()
+        {
 
         }
     }
