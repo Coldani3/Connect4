@@ -15,7 +15,7 @@ namespace Connect4
         public static int TickRate = 20;
         public static bool Running = true;
         public static Logic GameLogic = new Logic();
-        public static Renderer RendererLogic = new Renderer();
+        public static Renderer GameRenderer = new Renderer();
 
         static void Main(string[] args)
         {
@@ -37,6 +37,7 @@ namespace Connect4
         {
             while (Running)
             {
+                GameRenderer.Render();
 
                 Thread.Sleep(1000 / TickRate);
             }
@@ -49,7 +50,7 @@ namespace Connect4
         {
             while (Running)
             {
-
+                GameLogic.Tick();
                 Thread.Sleep(1000 / TickRate);
             }
         }

@@ -47,13 +47,18 @@ namespace Connect4
 
         public void DrawConnectFourDot(int gridX, int gridY, Logic.Connect4Colour colour)
         {
-            //TODO
             ConsoleColor prevColour = Console.ForegroundColor;
             Console.ForegroundColor = colour.Colour;
-            //draw stuff
+            DrawChar(gridX + ConnectFourGridStartX, gridY + ConnectFourGridStartY, 'O');
 
             Console.ForegroundColor = prevColour;
 
+        }
+
+        public void DrawChar(int gameX, int gameY, char character)
+        {
+            Console.SetCursorPosition(gameX, GameYToScreenY(gameY));
+            Console.Write(character);
         }
     }
 }
