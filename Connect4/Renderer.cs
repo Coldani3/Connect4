@@ -8,8 +8,12 @@ namespace Connect4
 {
     public class Renderer
     {
+        //Starts are always the lower left corner of the box
         public static int ConnectFourGridStartX = 0;
         public static int ConnectFourGridStartY = 0;
+        public static int ConnectFourGridHeight = 20;
+        public static int ConnectFourGridWidth = 10;
+        public static char FrameSide = '|'
 
         /// <summary>
         /// Executed as main render loop
@@ -22,7 +26,7 @@ namespace Connect4
         /// <summary>
         /// Draws the grid of dots themselves.
         /// </summary>
-        public void DrawConnectFourGrid()
+        public void DrawConnectFourDots()
         {
             //TODO
         }
@@ -33,6 +37,18 @@ namespace Connect4
         public void DrawConnectFourFrame()
         {
             //TODO
+            //draw side lines
+            for (int y = ConnectFourGridStartY - 1; y < ConnectFourGridStartY + ConnectFourGridHeight; y++)
+            {
+                DrawChar(ConnectFourGridStartX - 1, y, FrameSide);
+                DrawChar(ConnectFourGridStartX + ConnectFourGridWidth + 1, y, FrameSide);
+            }
+
+            //draw bottom line
+            for (int bottomLineX = ConnectFourGridStartX; bottomLineX < ConnectFourGridStartX + ConnectFourGridWidth; bottomLineX++)
+            {
+
+            }
         }
 
         public void DrawPlayerWin(string playerName)
