@@ -13,14 +13,22 @@ namespace Connect4
         public static int ConnectFourGridStartY = 0;
         public static int ConnectFourGridHeight = 20;
         public static int ConnectFourGridWidth = 10;
-        public static char FrameSide = '|'
+        public static char FrameSide = '|';
 
         /// <summary>
         /// Executed as main render loop
         /// </summary>
         public void Render()
         {
-
+            while (Program.Running)
+            {
+                if (Logic.GameInProgress)
+                {
+                    //draw grid
+                    DrawConnectFourFrame();
+                    DrawConnectFourDots();
+                }
+            }
         }
 
         /// <summary>
@@ -54,6 +62,7 @@ namespace Connect4
         public void DrawPlayerWin(string playerName)
         {
             //TODO
+            Console.Clear()
         }
 
         public static int GameYToScreenY(int gameY)

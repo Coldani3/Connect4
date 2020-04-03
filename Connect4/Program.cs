@@ -20,11 +20,9 @@ namespace Connect4
         static void Main(string[] args)
         {
             Task rendererThread = new Task(() => BeginRendering());
-            Task logicThread = new Task(() => BeginLogic());
             Task inputThread = new Task(() => InputThread());
 
             rendererThread.Start();
-            logicThread.Start();
             inputThread.Start();
 
 
@@ -43,23 +41,13 @@ namespace Connect4
             }
         }
 
-        /// <summary>
-        /// Thread where logic happens.
-        /// </summary>
-        public static void BeginLogic()
-        {
-            while (Running)
-            {
-                GameLogic.Tick();
-                Thread.Sleep(1000 / TickRate);
-            }
-        }
-
         public static void InputThread()
         {
             while (Running)
             {
                 GameLogic.HandleInput(Console.ReadKey(true));
+                //sleep so we don't accidentally put 10 dots in the same column from one key press
+                Thread.Sleep(200);
             }
         }
     }
