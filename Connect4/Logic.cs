@@ -12,7 +12,7 @@ namespace Connect4
         public const int Rows = 6;
         public Connect4Colour[][] ConnectFourGrid = new Connect4Colour[Columns][];
         public Connect4Colour CurrPlayerColour = Connect4Colour.Red;
-        public static bool GameInProgress;
+        public static bool GameInProgress = true;
 
         public Logic()
         {
@@ -32,16 +32,11 @@ namespace Connect4
             }
         }
 
-        public void Tick()
-        {
-
-        }
-
         public void HandleInput(ConsoleKeyInfo info)
         {
             if (Char.IsNumber(info.KeyChar))
             {
-                int key = Convert.ToInt32(info.KeyChar);
+                int key = Int32.Parse(info.KeyChar.ToString());
 
                 if (key >= 1 && key <= 7)
                 {
@@ -59,12 +54,13 @@ namespace Connect4
             if (index <= Columns)
             {
                 Connect4Colour[] column = ConnectFourGrid[index - 1];
+                int columnCount = column.Count(x => x != null);
 
-                if (column.Length < Rows)
+                if (columnCount < Rows)
                 {
-                    column[Utillity.ClampInt(0, Rows, column.Length - 1)] = CurrPlayerColour;
+                    column[Utillity.Clamp(columnCount, 0, Rows)] = CurrPlayerColour;
                     //check if there are matches whenever a dot drops
-                    LookForFourInARow(index - 1, column.Length - 2);
+                    LookForFourInARow(index - 1, columnCount - 2);
 
                     //swap colour 
                     if (CurrPlayerColour == Connect4Colour.Red) CurrPlayerColour = Connect4Colour.Yellow;
@@ -108,9 +104,11 @@ namespace Connect4
             bool fourInARowFound = false;
             int matchCount = 0;
 
-            for (int x = Utillity.ClampInt(0, Columns - 1, gridX - 3); x < Utillity.ClampInt(gridX, Columns - 1, gridX + 3); x = directionNavigationFuncX(x))
+            int min = Utillity.Clamp(gridX, 0, Rows - 1);
+
+            for (int x = Utillity.Clamp(gridX, 0, Rows - 1); x < Utillity.Clamp(gridX, 0, Rows - 1); x = directionNavigationFuncX(x))
             {
-                for (int y = Utillity.ClampInt(0, Rows - 1, gridY - 3); y < Utillity.ClampInt(gridY, Rows - 1, gridY + 3); y = directionNavigationFuncY(y))
+                for (int y = Utillity.Clamp(gridY, 0, Columns - 1); y < Utillity.Clamp(gridY, 0, Columns - 1); y = directionNavigationFuncY(y))
                 {
                     if (ConnectFourGrid[x][y] == CurrPlayerColour) matchCount++;
                     else matchCount = 0;
