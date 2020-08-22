@@ -14,6 +14,8 @@ namespace Connect4
         public Connect4Colour CurrPlayerColour = Connect4Colour.Red;
         public static bool GameInProgress = true;
 
+        public static bool GameWon = false;
+
         public Logic()
         {
             StartNewGame();
@@ -22,6 +24,8 @@ namespace Connect4
         public void StartNewGame()
         {
             InitGrid();
+            GameInProgress = true;
+            GameWon = false;
         }
 
         private void InitGrid()
@@ -38,7 +42,7 @@ namespace Connect4
             {
                 int key = Int32.Parse(info.KeyChar.ToString());
 
-                if (key >= 1 && key <= 7)
+                if (key >= 1 && key <= 7 && Logic.GameInProgress)
                 {
                     DropDot(key);
                 }
@@ -51,7 +55,7 @@ namespace Connect4
         /// <param name="index">1-7, the horizontal left to right coordinate of the hole to "drop" it into.</param>
         public void DropDot(int index)
         {
-            if (index <= Columns)
+            if (index <= Columns && index >= 1)
             {
                 Connect4Colour[] column = ConnectFourGrid[index - 1];
                 int columnCount = column.Count(x => x != null);
@@ -60,11 +64,14 @@ namespace Connect4
                 {
                     column[Utillity.Clamp(columnCount, 0, Rows)] = CurrPlayerColour;
                     //check if there are matches whenever a dot drops
-                    LookForFourInARow(index - 1, columnCount - 2);
+                    LookForFourInARow(index - 1, columnCount);
 
-                    //swap colour 
-                    if (CurrPlayerColour == Connect4Colour.Red) CurrPlayerColour = Connect4Colour.Yellow;
-                    else CurrPlayerColour = Connect4Colour.Red;
+                    if (!GameWon)
+                    {
+                        //swap colour 
+                        if (CurrPlayerColour == Connect4Colour.Red) CurrPlayerColour = Connect4Colour.Yellow;
+                        else CurrPlayerColour = Connect4Colour.Red;
+                    }
                 }
             }
         }
@@ -76,52 +83,191 @@ namespace Connect4
         /// <param name="gridY">0 index Y coordinate</param>
         public void LookForFourInARow(int gridX, int gridY)
         {
-            Func<int, int> increment = (val) => val++;
-            Func<int, int> decrement = (val) => val--;
-            Func<int, int> same = (val) => val;
-
             //If you want to know why I'm doing it with lambdas and stuff, I was too lazy to write out the same code 4 times but for different directions.
             //Also DRY is a thing and you should definitely try to follow that when you can
-            
-            if (IsFourInARowForDir(gridX, gridY, increment, increment) || //diagonal bottom to top
-                IsFourInARowForDir(gridX, gridY, increment, decrement) || //diagonal top to bottom
-                IsFourInARowForDir(gridX, gridY, increment, same) || //horizontal
-                IsFourInARowForDir(gridX, gridY, same, decrement)) //vertical
+
+            /*if (IsFourInARowForDir(gridX, gridY, 1, 1) || //diagonal bottom to top
+                IsFourInARowForDir(gridX, gridY, 1, -1) || //diagonal top to bottom
+                IsFourInARowForDir(gridX, gridY, 1, 0) || //horizontal
+                IsFourInARowForDir(gridX, gridY, 0, 1)) //vertical
             {
                 //they got a four in a row
-                PlayerWon(CurrPlayerColour);
+                PlayerWon();
+            }*/
+
+            //I give up jesus christ
+
+            bool matchFound = false;
+            int count = 0;
+
+
+            do
+            {
+                //row
+                for (int i = -(gridX > 2 ? 3 : gridX) /*Gets minus gridX when it is less than 3 or minus 3 otherwise*/; 
+                    i < 3 && (gridX + i) < Columns; i++)
+                {
+                    //gridX + -3 is 3 to the left of gridX, or where we want to start checking
+                    if (ConnectFourGrid[gridX + i][gridY] == CurrPlayerColour) count++;
+                    else count = 0;
+
+                    if (count >= 4)
+                    {
+                        matchFound = true;
+                        break;
+                    }
+                }
+
+                count = 0;
+
+                //column
+                for (int i = -(gridY > 2 ? 3 : gridY); i < 3 && (gridY + i) < Rows; i++)
+                {
+                    if (ConnectFourGrid[gridX][gridY + i] == CurrPlayerColour) count++;
+                    else count = 0;
+
+                    if (count >= 4)
+                    {
+                        matchFound = true;
+                        break;
+                    }
+                }
+
+                //Diagonals
+                count = 0;
+
+                int i2 = -(gridY > 2 ? 3 : gridY);
+
+                for (int i = -(gridX > 2 ? 3 : 0); i < 3 && (gridX + i) < Columns/*Utillity.Clamp(gridX + 3, 0, Columns - 1) && !matchFound*/; i++)
+                {
+                    //for (int i2 = -(gridY > 2 ? 3 : 0); i2 < 3 && (gridY + i) < Rows/*Utillity.Clamp(gridY + 3, 0, Rows - 1) && !matchFound*/; i2++)
+                    //{
+                    if (ConnectFourGrid[gridX + i][gridY + i2] == CurrPlayerColour) count++;
+                    else count = 0;
+
+                    if (count >= 4)
+                    {
+                        matchFound = true;
+                        break;
+                    }
+                    //}
+
+                    i2++;
+                    if (gridY + i2 > Columns) break;
+                }
+
+                count = 0;
+
+                i2 = -(gridY > 2 ? 3 : gridY);
+
+                for (int i = -(gridX > 2 ? 3 : gridX); i < 3 && (gridX + i) < Columns/*Utillity.Clamp(gridX + 3, 0, Columns - 1) && !matchFound*/; i++)
+                {
+                    
+                    //for (int i2 = -(gridY > 2 ? 3 : 0); i2 < 3 && (gridY + i) < Rows/*Utillity.Clamp(gridY + 3, 0, Rows - 1) && !matchFound*/; i2++)
+                    //{
+                    if (gridX - i >= 0 && gridY - i2 >= 0)
+                    {
+                        if (ConnectFourGrid[gridX + i][gridY + i2] == CurrPlayerColour) count++;
+                        else count = 0;
+                    }
+
+                    if (count >= 4) matchFound = true;
+                    //}
+
+                    i2++;
+
+                    if (gridY + i2 > Columns) break;
+                }
+
             }
+            while (false);
+
+
+            //count = 0;
+
+            //if (!matchFound)
+            //{
+                
+
+            //    count = 0;
+
+            //    //diag up and diag down
+
+            //    int count2 = 0;
+
+            //    for (int i = -(gridX > 2 ? 3 : 0); i < Utillity.Clamp(gridX + 3, 0, Columns - 1) && !matchFound; i++)
+            //    {
+            //        for (int i2 = -(gridY > 2 ? 3 : 0); i2 < Utillity.Clamp(gridY + 3, 0, Rows - 1) && !matchFound; i2++)
+            //        {
+            //            if (ConnectFourGrid[gridX + i][gridY + i2] == CurrPlayerColour) count++;
+
+            //            if (gridX - i >= 0 && gridY - i2 >= 0)
+            //            {
+            //                if (ConnectFourGrid[gridX - i][gridY - i2] == CurrPlayerColour) count2++;
+            //            }
+
+            //            if (count >= 4 || count2 >= 4) matchFound = true;
+            //        }
+            //    }
+            //}
+
+            if (matchFound) PlayerWon();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="directionNavigationFuncX">A lambda that specifies how the x of the dot we are checking changes every check</param>
-        /// <param name="directionNavigationFuncY">A lambda that specifies how the y of the dot we are checking changes every check</param>
-        /// <returns>True if a match was found</returns>
-        private bool IsFourInARowForDir(int gridX, int gridY, Func<int, int> directionNavigationFuncX, Func<int, int> directionNavigationFuncY)
+        private bool IsFourInARowForDir(int gridX, int gridY, int xChange, int yChange)
         {
-            bool fourInARowFound = false;
             int matchCount = 0;
+            
+            int xUpperBound = Utillity.Clamp(gridX + (3 * xChange), 0, Columns - 1);
+            int yUpperBound = Utillity.Clamp(gridY + (3 * yChange), 0, Rows - 1);
+            //yes it's hacky
+            //no i don't care, I've already spent hours on this one bit of logic
+            bool xRan = false;
+            bool yRan = false;
+            bool skipOne = false;
 
-            int min = Utillity.Clamp(gridX, 0, Rows - 1);
-
-            for (int x = Utillity.Clamp(gridX, 0, Rows - 1); x < Utillity.Clamp(gridX, 0, Rows - 1); x = directionNavigationFuncX(x))
+            for (int x = Utillity.Clamp(gridX - (3 * xChange), 0, Columns - 1); x <= xUpperBound && !xRan; x += xChange)
             {
-                for (int y = Utillity.Clamp(gridY, 0, Columns - 1); y < Utillity.Clamp(gridY, 0, Columns - 1); y = directionNavigationFuncY(y))
+                for (int y = Utillity.Clamp(gridY - (3 * yChange), 0, Rows - 1); y <= yUpperBound && !yRan; y += yChange)
                 {
-                    if (ConnectFourGrid[x][y] == CurrPlayerColour) matchCount++;
+                    if (ConnectFourGrid[x][y] == CurrPlayerColour)
+                    {
+                        matchCount++;
+
+                        if (matchCount >= 4) return true;
+                    }
+                    else matchCount = 0;
+
+                    if (yChange == 0)
+                    {
+                        yRan = true;
+                        skipOne = true;
+                    }
+                }
+
+                if (xChange == 0) xRan = true;
+                if (skipOne) continue;
+
+                if (yChange == 0)
+                {
+                    if (ConnectFourGrid[x][gridY] == CurrPlayerColour)
+                    {
+                        matchCount++;
+
+                        if (matchCount >= 4) return true;
+                    }
                     else matchCount = 0;
                 }
             }
 
-            fourInARowFound = matchCount >= 4;
-            return fourInARowFound;
+            return false;
+
         }
 
-        public void PlayerWon(Connect4Colour winner)
+        public void PlayerWon()
         {
-            Logic.GameInProgress = false;
+            GameInProgress = false;
+            GameWon = true;
         }
 
         //object so I can keep the console color stored in the value instead of using a dictionary

@@ -16,8 +16,6 @@ namespace Connect4
         public static int ConnectFourFrameWidth = Logic.Columns + 2;
         public static char FrameSide = '|';
 
-
-
         /// <summary>
         /// Executed as main render loop
         /// </summary>
@@ -31,6 +29,14 @@ namespace Connect4
                     DrawConnectFourFrame();
                     DrawConnectFourDots();
                 }
+
+                if (Logic.GameWon)
+                {
+                    Console.Clear();
+                    DrawPlayerWin();
+                    Program.Running = false;
+                }
+
             }
         }
 
@@ -41,24 +47,36 @@ namespace Connect4
         {
             //TODO
             //draw side lines
-            for (int y = ConnectFourGridStartY - 1; y < ConnectFourGridStartY + ConnectFourFrameHeight; y++)
+            for (int y = ConnectFourGridStartY; y < ConnectFourGridStartY + ConnectFourFrameHeight - 1; y++)
             {
                 DrawChar(ConnectFourGridStartX - 1, y, FrameSide);
-                DrawChar(ConnectFourGridStartX + ConnectFourFrameWidth + 1, y, FrameSide);
+                DrawChar(ConnectFourGridStartX + ConnectFourFrameWidth - 2, y, FrameSide);
+
+                DrawPlayerTurn();
             }
 
             //draw bottom line
-            for (int bottomLineX = ConnectFourGridStartX; bottomLineX < ConnectFourGridStartX + ConnectFourFrameWidth; bottomLineX++)
+            for (int bottomLineX = ConnectFourGridStartX - 1; bottomLineX < ConnectFourGridStartX + ConnectFourFrameWidth - 1; bottomLineX++)
             {
                 DrawChar(bottomLineX, ConnectFourGridStartY - 1, '-');
             }
         }
 
-        public void DrawPlayerWin(string playerName)
+        public void DrawPlayerTurn()
         {
-            Console.Clear();
-            string message = $"Player {playerName} won!";
-            DrawString((int) ((Program.WindowWidth / 2) - Math.Round((float) (message.Length / 2))), Program.WindowHeight / 2, message);
+            Logic.Connect4Colour player = Program.GameLogic.CurrPlayerColour;
+            //Spaces save me having to erase previous player turn text
+            string message = $"          {player.ColourName}'s turn          ";
+
+            DrawColouredString((int)((Program.WindowWidth / 2) - Math.Round((float)(message.Length / 2))), Program.WindowHeight - 4, message, player.Colour);
+        }
+
+        public void DrawPlayerWin()
+        {
+            Logic.Connect4Colour player = Program.GameLogic.CurrPlayerColour;
+            string message = $"Player {player.ColourName} won!";
+
+            DrawColouredString((int)((Program.WindowWidth / 2) - Math.Round((float)(message.Length / 2))), Program.WindowHeight / 2, message, player.Colour);
         }
 
         public static int GameYToScreenY(int gameY)
@@ -105,6 +123,16 @@ namespace Connect4
         {
             Console.SetCursorPosition(gameX, GameYToScreenY(gameY));
             Console.Write(message);
+        }
+
+        public void DrawColouredString(int gameX, int gameY, string message, ConsoleColor consoleColour, bool switchToPrevColour = true)
+        {
+            ConsoleColor prevColour = Console.ForegroundColor;
+            Console.ForegroundColor = consoleColour;
+
+            DrawString(gameX, gameY, message);
+
+            if (switchToPrevColour) Console.ForegroundColor = prevColour;
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Connect4
         /// <summary>
         /// Ticks per second
         /// </summary>
-        public static int TickRate = 20;
+        public static int FrameRate = 20;
         public static bool Running = true;
         public static Logic GameLogic = new Logic();
         public static Renderer GameRenderer = new Renderer();
@@ -23,26 +23,19 @@ namespace Connect4
         {
             Console.SetWindowSize(WindowWidth, WindowHeight);
             Console.CursorVisible = false;
-            Task rendererThread = new Task(() => BeginRendering());
+         
             Task inputThread = new Task(() => InputThread());
-
-            rendererThread.Start();
             inputThread.Start();
 
-            while (Running) { }
-        }
-
-        /// <summary>
-        /// Main rendering thread.
-        /// </summary>
-        public static void BeginRendering()
-        {
             while (Running)
             {
                 GameRenderer.Render();
+                Thread.Sleep(1000 / FrameRate);
 
-                Thread.Sleep(1000 / TickRate);
+                if (Logic.GameInProgress) Console.Clear();
             }
+
+            Console.ReadKey(true);
         }
 
         public static void InputThread()
