@@ -83,23 +83,8 @@ namespace Connect4
         /// <param name="gridY">0 index Y coordinate</param>
         public void LookForFourInARow(int gridX, int gridY)
         {
-            //If you want to know why I'm doing it with lambdas and stuff, I was too lazy to write out the same code 4 times but for different directions.
-            //Also DRY is a thing and you should definitely try to follow that when you can
-
-            /*if (IsFourInARowForDir(gridX, gridY, 1, 1) || //diagonal bottom to top
-                IsFourInARowForDir(gridX, gridY, 1, -1) || //diagonal top to bottom
-                IsFourInARowForDir(gridX, gridY, 1, 0) || //horizontal
-                IsFourInARowForDir(gridX, gridY, 0, 1)) //vertical
-            {
-                //they got a four in a row
-                PlayerWon();
-            }*/
-
-            //I give up jesus christ
-
             bool matchFound = false;
             int count = 0;
-
 
             do
             {
@@ -138,10 +123,8 @@ namespace Connect4
 
                 int i2 = -(gridY > 2 ? 3 : gridY);
 
-                for (int i = -(gridX > 2 ? 3 : 0); i < 3 && (gridX + i) < Columns/*Utillity.Clamp(gridX + 3, 0, Columns - 1) && !matchFound*/; i++)
+                for (int i = -(gridX > 2 ? 3 : 0); i < 3 && (gridX + i) < Columns; i++)
                 {
-                    //for (int i2 = -(gridY > 2 ? 3 : 0); i2 < 3 && (gridY + i) < Rows/*Utillity.Clamp(gridY + 3, 0, Rows - 1) && !matchFound*/; i2++)
-                    //{
                     if (ConnectFourGrid[gridX + i][gridY + i2] == CurrPlayerColour) count++;
                     else count = 0;
 
@@ -150,7 +133,6 @@ namespace Connect4
                         matchFound = true;
                         break;
                     }
-                    //}
 
                     i2++;
                     if (gridY + i2 > Columns) break;
@@ -160,11 +142,8 @@ namespace Connect4
 
                 i2 = -(gridY > 2 ? 3 : gridY);
 
-                for (int i = -(gridX > 2 ? 3 : gridX); i < 3 && (gridX + i) < Columns/*Utillity.Clamp(gridX + 3, 0, Columns - 1) && !matchFound*/; i++)
+                for (int i = -(gridX > 2 ? 3 : gridX); i < 3 && (gridX + i) < Columns; i++)
                 {
-                    
-                    //for (int i2 = -(gridY > 2 ? 3 : 0); i2 < 3 && (gridY + i) < Rows/*Utillity.Clamp(gridY + 3, 0, Rows - 1) && !matchFound*/; i2++)
-                    //{
                     if (gridX - i >= 0 && gridY - i2 >= 0)
                     {
                         if (ConnectFourGrid[gridX + i][gridY + i2] == CurrPlayerColour) count++;
@@ -172,7 +151,6 @@ namespace Connect4
                     }
 
                     if (count >= 4) matchFound = true;
-                    //}
 
                     i2++;
 
@@ -181,35 +159,6 @@ namespace Connect4
 
             }
             while (false);
-
-
-            //count = 0;
-
-            //if (!matchFound)
-            //{
-                
-
-            //    count = 0;
-
-            //    //diag up and diag down
-
-            //    int count2 = 0;
-
-            //    for (int i = -(gridX > 2 ? 3 : 0); i < Utillity.Clamp(gridX + 3, 0, Columns - 1) && !matchFound; i++)
-            //    {
-            //        for (int i2 = -(gridY > 2 ? 3 : 0); i2 < Utillity.Clamp(gridY + 3, 0, Rows - 1) && !matchFound; i2++)
-            //        {
-            //            if (ConnectFourGrid[gridX + i][gridY + i2] == CurrPlayerColour) count++;
-
-            //            if (gridX - i >= 0 && gridY - i2 >= 0)
-            //            {
-            //                if (ConnectFourGrid[gridX - i][gridY - i2] == CurrPlayerColour) count2++;
-            //            }
-
-            //            if (count >= 4 || count2 >= 4) matchFound = true;
-            //        }
-            //    }
-            //}
 
             if (matchFound) PlayerWon();
         }
@@ -221,7 +170,7 @@ namespace Connect4
             int xUpperBound = Utillity.Clamp(gridX + (3 * xChange), 0, Columns - 1);
             int yUpperBound = Utillity.Clamp(gridY + (3 * yChange), 0, Rows - 1);
             //yes it's hacky
-            //no i don't care, I've already spent hours on this one bit of logic
+            //no i don't care, it works
             bool xRan = false;
             bool yRan = false;
             bool skipOne = false;

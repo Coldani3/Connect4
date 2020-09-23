@@ -45,7 +45,6 @@ namespace Connect4
         /// </summary>
         public void DrawConnectFourFrame()
         {
-            //TODO
             //draw side lines
             for (int y = ConnectFourGridStartY; y < ConnectFourGridStartY + ConnectFourFrameHeight - 1; y++)
             {
@@ -60,6 +59,19 @@ namespace Connect4
             {
                 DrawChar(bottomLineX, ConnectFourGridStartY - 1, '-');
             }
+
+            ConsoleColor currentColor = Console.ForegroundColor;
+            //draw key aids
+            int num = 1;
+            for (int x = ConnectFourGridStartX; x < ConnectFourGridStartX + Logic.Columns; x++)
+            {
+                Console.ForegroundColor = (num % 2 == 1 ? ConsoleColor.Red : ConsoleColor.Yellow);
+                DrawChar(x, ConnectFourGridStartY + ConnectFourFrameHeight - 1, Convert.ToString(num)[0]);
+                DrawChar(x, ConnectFourGridStartY - 2, Convert.ToString(num)[0]);
+                num++;
+            }
+
+            Console.ForegroundColor = currentColor;
         }
 
         public void DrawPlayerTurn()
